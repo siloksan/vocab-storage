@@ -5,14 +5,7 @@
   <title>Open Mobile Client</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Reset some default styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
       display: flex;
       flex-direction: column;
@@ -24,18 +17,8 @@
       text-align: center;
       padding: 20px;
     }
-
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 1rem;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
+    h1 { font-size: 1.8rem; margin-bottom: 20px; }
+    p { font-size: 1rem; margin-bottom: 20px; line-height: 1.5; }
     a#fallback-link {
       display: inline-block;
       background-color: #fff;
@@ -48,12 +31,10 @@
       transition: all 0.2s ease-in-out;
       font-size: 1rem;
     }
-
     a#fallback-link:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     }
-
     .message {
       margin-top: 20px;
       font-size: 0.9rem;
@@ -62,17 +43,40 @@
   </style>
 </head>
 <body>
-  <h1>Open Mobile Client</h1>
-  <p>Your app should open automatically. If it doesn’t, click the button below:</p>
+  <h1 id="title">Open Mobile Client</h1>
+  <p id="instruction">Your app should open automatically. If it doesn’t, click the button below:</p>
   <a id="fallback-link" href="#">Open App</a>
   <p class="message" id="fallback-message"></p>
 
   <script>
-    // 1️⃣ Get the fragment from the URL (#access_token=...)
-    const fragment = window.location.hash.substring(1); // remove #
-    // Example: fragment = "access_token=XYZ&type=recovery"
+    // Localization dictionary
+    const messages = {
+      en: {
+        title: "Open Mobile Client",
+        instruction: "Your app should open automatically. If it doesn’t, click the button below:",
+        fallback: "If the app didn't open automatically, please open it manually or install it first.",
+        button: "Open App"
+      },
+      ru: {
+        title: "Открыть Mobile Client",
+        instruction: "Приложение должно открыться автоматически. Если этого не произошло, нажмите кнопку ниже:",
+        fallback: "Если приложение не открылось автоматически, откройте его вручную или установите сначала.",
+        button: "Открыть приложение"
+      }
+    };
 
-    // 2️⃣ Build custom scheme URL with query params
+    // Detect user language
+    const lang = navigator.language.startsWith("ru") ? "ru" : "en";
+
+    // Apply localized text
+    document.getElementById("title").innerText = messages[lang].title;
+    document.getElementById("instruction").innerText = messages[lang].instruction;
+    document.getElementById("fallback-link").innerText = messages[lang].button;
+
+    // 1️⃣ Get fragment from URL (#access_token=...)
+    const fragment = window.location.hash.substring(1); 
+
+    // 2️⃣ Build custom scheme URL
     const appUrl = `mobileclient://auth/reset?${fragment}`;
 
     // 3️⃣ Try to open the app
@@ -82,10 +86,10 @@
     const fallback = document.getElementById("fallback-link");
     fallback.href = appUrl;
 
-    // 5️⃣ Show fallback message if app not opened automatically after 2s
+    // 5️⃣ Show fallback message if app not opened after 2s
     setTimeout(() => {
       const msg = document.getElementById("fallback-message");
-      msg.innerText = "If the app didn't open automatically, please open it manually or install it first.";
+      msg.innerText = messages[lang].fallback;
     }, 2000);
   </script>
 </body>
