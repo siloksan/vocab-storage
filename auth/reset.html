@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Open Mobile Client</title>
+</head>
+<body>
+  <p>If your app doesn’t open automatically, click the button below:</p>
+  <a id="fallback-link" href="#">Open App</a>
+
+  <script>
+    // 1️⃣ Get the fragment from the URL (#access_token=...)
+    const fragment = window.location.hash.substring(1); // remove #
+    // Example: fragment = "access_token=XYZ&type=recovery"
+
+    // 2️⃣ Build custom scheme URL with query params
+    const appUrl = `mobileclient://auth/reset?${fragment}`;
+
+    // 3️⃣ Try to open the app
+    window.location.href = appUrl;
+
+    // 4️⃣ Update fallback link so user can click if redirect fails
+    const fallback = document.getElementById("fallback-link");
+    fallback.href = appUrl;
+
+    // 5️⃣ Optional: show message if app not installed after 2s
+    setTimeout(() => {
+      document.body.innerHTML +=
+        "<p>If the app didn't open automatically, please open it manually or install it first.</p>";
+    }, 2000);
+  </script>
+</body>
+</html>
